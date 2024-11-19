@@ -1,9 +1,7 @@
 import {
-  Body,
   Post,
   Get,
   Delete,
-  Put,
   Param,
   Controller,
   HttpException,
@@ -40,8 +38,30 @@ export class PromptController {
       );
     }
 
-    const prompt = this.promptService.create(req.body);
+    const prompt = await this.promptService.create(req.body);
 
     return prompt;
+  }
+
+  @Get(':id')
+  async getPromptById(@Param() id: string): Promise<Prompt> {
+    const prompt = await this.promptService.findById(id);
+
+    if (!prompt) {
+      throw new HttpException('No prompt found.', HttpStatus.NOT_FOUND);
+    }
+
+    return prompt;
+  }
+
+  @Delete(':id')
+  async deletePromptById(@Param() id: string): Promise<Prompt> {
+    const deletedPrompt = await this.promptService.deleteById(id);
+
+    if (!deletedPrompt) {
+      throw new HttpException('No prompt found.', HttpStatus.NOT_FOUND);
+    }
+
+    return deletedPrompt;
   }
 }
